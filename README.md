@@ -65,17 +65,17 @@ python idor_tester.py -u <url> -s <start_id> -e <end_id> [options]
 
 **Basic scan:**
 ```bash
-python idor_tester.py -u http://localhost:5000/vulnerable/invoices/{id} -s 100 -e 110
+python idor_tester.py -u 'http://localhost:5000/vulnerable/invoices/{id}' -s 100 -e 110
 ```
 
 **With session cookie:**
 ```bash
-python idor_tester.py -u http://localhost:5000/vulnerable/invoices/{id} -s 100 -e 110 -c "session=user2_session"
+python idor_tester.py -u 'http://localhost:5000/vulnerable/invoices/{id}' -s 100 -e 110 -c "session=user2_session"
 ```
 
 **Verbose output, save to JSON:**
 ```bash
-python idor_tester.py -u http://localhost:5000/vulnerable/invoices/{id} -s 100 -e 110 -c "session=user2_session" -v -o results.json
+python idor_tester.py -u 'http://localhost:5000/vulnerable/invoices/{id}' -s 100 -e 110 -c "session=user2_session" -v -o results.json
 ```
 
 **With Bearer token:**
@@ -127,20 +127,38 @@ GET /secure/orders/{id}
 ```bash
 python vulnerable_app.py
 ```
+<img width="1531" height="378" alt="image" src="https://github.com/user-attachments/assets/e92b9be5-3695-429b-b8b0-db61b887d071" />
+<br></br>
+<img width="1910" height="1040" alt="image" src="https://github.com/user-attachments/assets/54a96bd7-0553-4837-9b49-9c36f508c799" />
 
 **Step 2 — Run the IDOR tester against the vulnerable endpoint:**
 ```bash
-python idor_tester.py -u http://localhost:5000/vulnerable/invoices/{id} -s 100 -e 110 -c "session=user2_session" -v
+python idor_tester.py -u 'http://localhost:5000/vulnerable/invoices/{id}' -s 100 -e 110 -c "session=user2_session" -v
 ```
+<img width="1325" height="899" alt="image" src="https://github.com/user-attachments/assets/4003c559-cf69-42e8-8719-80c05e202a29" />
+<br></br>
 You will see invoices belonging to other users returned — that's the IDOR.
+<br></br>
 
 **Step 3 — Run against the secure endpoint:**
 ```bash
 python idor_tester.py -u http://localhost:5000/secure/invoices/{id} -s 100 -e 110 -c "session=user2_session" -v
 ```
+<img width="1280" height="860" alt="image" src="https://github.com/user-attachments/assets/3c8da076-f701-487a-9575-fe5f2b5d1c53" />
+<br></br>
 Only Bob's own invoices (101, 104) are returned. Everything else returns 403.
+<br></br>
 
-**Step 4 — Compare the two routes in `vulnerable_app.py`** to see exactly what ownership check fixes the vulnerability.
+**Step 4 — Save results to a file.**
+```bash
+python idor_tester.py -u http://localhost:5000/secure/invoices/{id} -s 100 -e 110 -c "session=user2_session" -v
+```
+<img width="1448" height="43" alt="image" src="https://github.com/user-attachments/assets/cb4ce22a-8331-476d-9f03-26dfba6b96b4" />
+<br></br>
+<img width="690" height="803" alt="image" src="https://github.com/user-attachments/assets/0803cc35-eca6-46d6-a9de-64de7cc44a31" />
+<br></br>
+
+**Step 5 — Compare the two routes in `vulnerable_app.py`** to see exactly what ownership check fixes the vulnerability.
 
 ---
 
